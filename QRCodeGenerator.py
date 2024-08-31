@@ -5,6 +5,7 @@ import openpyxl
 from openpyxl.drawing.image import Image as ExcelImage
 
 
+# Read the TinyUrl authentication token from file
 def read_auth_token(file_path):
     with open(file_path, 'r') as file:
         token = file.read().strip()  # Read the token and remove any surrounding whitespace
@@ -14,6 +15,7 @@ def read_auth_token(file_path):
     return token
 
 
+# Shorten URL using TinyURL API
 def shorten_url_with_tinyurl(url):
     auth_token = read_auth_token('tinyurl_auth_token.txt')
     api_url = "https://api.tinyurl.com/create"
@@ -35,6 +37,7 @@ def shorten_url_with_tinyurl(url):
         return url  # Return original URL if shortening fails
 
 
+# Save QR code data to an Excel file
 def save_to_excel(file_name, xlsx_user_input, xlsx_original_url, xlsx_short_url, xlsx_qr_img):
     # Check if the file exists, if not create it with headers
     try:
@@ -70,10 +73,11 @@ def save_to_excel(file_name, xlsx_user_input, xlsx_original_url, xlsx_short_url,
     workbook.save(file_name)
 
 
+# Generate a QR code with a high error correction and an optional logo
 def generate_qr_code_with_high_error_correction(data, scale=10, include_logo=False, logo_path=None):
     qr = segno.make(data, error='h')  # High error correction
     qr_file = "temp_qr_with_logo.png" if include_logo else "temp_qr_without_logo.png"
-    qr.save(qr_file, scale=scale)
+    qr.save(qr_file, scale=scale) # Save QR code to file
 
     if include_logo and logo_path:
         qr_img = Image.open(qr_file).convert("RGBA")
@@ -81,39 +85,43 @@ def generate_qr_code_with_high_error_correction(data, scale=10, include_logo=Fal
         logo_size = qr_img.size[0] // 10  # Resize logo to 10% of QR code size
         logo = logo.resize((logo_size, logo_size), Image.Resampling.LANCZOS)
         pos_center = ((qr_img.size[0] - logo_size) // 2, (qr_img.size[1] - logo_size) // 2)
-        qr_img.paste(logo, pos_center, mask=logo)
+        qr_img.paste(logo, pos_center, mask=logo) # Overlay logo
         qr_img.save(qr_file)
 
     return qr_file
 
 
+# Crop whitespace from the QR image
 def crop_whitespace(image_path):
     img = Image.open(image_path)
-    bg = Image.new(img.mode, img.size, img.getpixel((0, 0)))
-    diff = ImageChops.difference(img, bg)
-    bbox = diff.getbbox()
+    bg = Image.new(img.mode, img.size, img.getpixel((0, 0)))  # Create background image
+    diff = ImageChops.difference(img, bg)  # Get difference between image and background
+    bbox = diff.getbbox()  # Get bounding box of non-background area
     if bbox:
-        img = img.crop(bbox)
+        img = img.crop(bbox)  # Crop image to bounding box
     return img
 
 
+# Tile the QR image
 def tile_qr_code(cropped_img, tile_count=3):
     width, height = cropped_img.size
     tiled_img = Image.new('RGBA', (width * tile_count, height * tile_count), (255, 255, 255, 0))
 
     for i in range(tile_count):
         for j in range(tile_count):
-            tiled_img.paste(cropped_img, (i * width, j * height))
+            tiled_img.paste(cropped_img, (i * width, j * height)) # Paste QR code in grid
 
     return tiled_img
 
 
+# Overlay a center QR code (w/ logo) onto the tiled QR image
 def overlay_center_qr(tiled_img, center_qr):
     center_pos = ((tiled_img.size[0] - center_qr.size[0]) // 2, (tiled_img.size[1] - center_qr.size[1]) // 2)
     tiled_img.paste(center_qr, center_pos, mask=center_qr)
     return tiled_img
 
 
+# Main function to orchestrate the QR code generation process
 def main():
     data = input("Enter the URL or data to encode in the QR code: ")
     file_name = input("Enter the file name for the final QR code image (without extension): ")
