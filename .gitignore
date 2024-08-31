@@ -1,0 +1,23 @@
+# Ignore Python cache files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Ignore virtual environments
+venv/
+.env/
+
+# Ignore IDE config files (example for PyCharm)
+.idea/
+
+# Ignore compiled files
+*.o
+*.so
+*.exe
+*.dll
+
+# Ignore log files
+*.log
+
+# Ignore Auth Key
+tinyurl_auth_token.txt
