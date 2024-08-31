@@ -26,18 +26,18 @@ cd QRCodeGenerator
 pip install requests segno Pillow openpyxl
 Place your TinyURL API token in a file named tinyurl_auth_token.txt.
 
-###### Add your custom images (sweeping-mickey.png and mickey_template.png) to the project directory.
+##### Add your custom images (sweeping-mickey.png and mickey_template.png) to the project directory.
 
-###### Usage
+##### Usage
 Run the Script:
 python QRCodeGenerator.py
 Input the URL: When prompted, enter the URL or data you want to encode in the QR code.
 
-###### Specify the File Name: Enter the desired file name for the final QR code image.
+##### Specify the File Name: Enter the desired file name for the final QR code image.
 
-###### View the Results: The generated QR code image will be saved in the project directory. Details including the original URL, shortened URL, and the QR code image will be logged into tinyurl_links.xlsx.
+##### View the Results: The generated QR code image will be saved in the project directory. Details including the original URL, shortened URL, and the QR code image will be logged into tinyurl_links.xlsx.
 
-###### Code Breakdown
+##### Code Breakdown
 - read_auth_token(file_path): Reads the TinyURL authentication token from a file.
 - shorten_url_with_tinyurl(url): Shortens a given URL using the TinyURL API.
 - generate_qr_code_with_high_error_correction(data, scale=10, include_logo=False, logo_path=None): Generates a QR code with optional logo insertion.
@@ -46,7 +46,7 @@ Input the URL: When prompted, enter the URL or data you want to encode in the QR
 - overlay_center_qr(tiled_img, center_qr): Overlays a logo-inserted QR code onto the tiled QR image.
 - save_to_excel(file_name, xlsx_user_input, xlsx_original_url, xlsx_short_url, xlsx_qr_img): Logs the QR code details into an Excel file.
 
-###### Future Enhancements
+##### Future Enhancements
 - GUI Integration: Implement a graphical user interface for ease of use.
 - Dynamic QR Codes: Enable the generation of dynamic QR codes that can be updated without changing the QR code image.
 - Bulk URL Processing: Add functionality for bulk processing of URLs from an Excel file.
